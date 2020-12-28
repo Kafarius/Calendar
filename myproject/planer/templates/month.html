@@ -1,0 +1,213 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{% static 'css/month.css' %}" rel="stylesheet" type="text/css">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <title>{{user}}'s {{month}}</title>
+</head>
+<body>
+
+    {% if request.user.is_authenticated %}
+
+      <h1 class="month_name">{{month}}'21</h1>
+      <div id="date_info">
+          <p>Day: <span id="day"></span> - <span id="weekday"></span></p>
+          <p>Time: <span id="time"></span></p>
+      </div>
+      {% for day in days %}
+          <div class="scene">
+              <div class="day">
+                  <div class="day_face front">
+                      <p class="day_numb">{{day.eday}} - {{day.eweekday}}<a class="opt"></a></p>
+                      <ul>
+                          {% for event in events %}
+                              {% if event.eday == day.eday %}
+
+                                      <li>
+                                          <p class="event">
+                                              <span class="day_time">{{event.etime}}</span><span class="day_name"> - {{event.ename}}</span>
+                                              <br><span class="event_text">{{event.etext}}</span>
+                                          </p>
+                                      </li>
+
+
+                              {% endif %}
+                          {% endfor %}
+                      </ul>
+                      <div class="ev_count">events: {{day.ecount}}</div>
+                  </div>
+
+                  <div class="day_face back">
+                      <p class="day_numb">{{day.eday}} - {{day.eweekday}}<a class="opt"></a></p>
+                          <ul>
+                              {% for event in events %}
+                                  {% if event.eday == day.eday %}
+                                      <div class="event_panel">
+                                          <a class="ev_back"><p>{{event.etime}} - {{event.ename}}</p></a>
+                                          <div class="ev_menu">
+                                            <div class="edit_panel">
+                                              <button class="edit">Edit</button>
+                                              <form id="edit_form" action="/eventedit/" method="post">
+                                                  {% csrf_token %}
+                                                    <input type="hidden" id="ename" name="ename" value="{{event.ename}}">
+                                                    <input type="hidden" id="etext" name="etext" value="{{event.etext}}">
+                                                    <input type="hidden" id="userid" name="userid" value="{{event.userid}}">
+                                                    <input type="time" id="new_etime" name="new_etime" value="{{event.etime}}" required>
+                                                    <input type="text" id="new_ename" name="new_ename" value="{{event.ename}}" required>
+                                                    <input type="text" id="new_etext" name="new_etext" value="{{event.etext}}" required>
+                                                  <button class="save" type="submit">Save</button>
+                                              </form>
+                                            </div>
+
+                                            <div class="moveTo_panel">
+                                              <button class="moveTo">Move</button>
+                                              <form id="move_form" action="/eventmove/" method="post">
+                                                  {% csrf_token %}
+                                                    <input type="hidden" id="eday" name="eday" value="{{event.eday}}">
+                                                    <input type="hidden" id="emonth" name="emonth" value="{{event.emonth}}">
+                                                    <input type="hidden" id="userid" name="userid" value="{{event.userid}}">
+                                                    <input type="number" name="new_eday" id="new_eday" min="1" max="31" value="{{event.eday}}">
+                                                    <select name="new_emonth" id="new_emonth">
+                                                        <option value="January">January</option>
+                                                        <option value="February">February</option>
+                                                        <option value="March">March</option>
+                                                        <option value="April">April</option>
+                                                        <option value="May">May</option>
+                                                        <option value="June">June</option>
+                                                        <option value="July">July</option>
+                                                        <option value="August">August</option>
+                                                        <option value="September">September</option>
+                                                        <option value="October">October</option>
+                                                        <option value="November">November</option>
+                                                        <option value="December">December</option>
+                                                      </select>
+                                                  <button class="move" type="submit">Move this event</button>
+                                              </form>
+                                            </div>
+
+                                               <form action="/makemonthly/" method="post">
+                                                  {% csrf_token %}
+                                                    <input type="hidden" id="id" name="id" value="{{event.id}}">
+
+                                                  <button class="make_monthly" type="submit">Make Monthly</button>
+                                              </form>
+
+                                              <form action="/eventdelete/" method="post">
+                                                  {% csrf_token %}
+                                                    <input type="hidden" id="userid" name="userid" value="{{event.userid}}">
+                                                    <input type="hidden" id="emonth" name="emonth" value="{{event.emonth}}">
+                                                    <input type="hidden" id="eday" name="eday" value="{{event.eday}}">
+                                                    <input type="hidden" id="ename" name="ename" value="{{event.ename}}">
+                                                  <button class="delete" type="submit">Delete</button>
+                                              </form>
+
+                                          </div>
+                                      </div>
+                                  {% endif %}
+                              {% endfor %}
+                          </ul>
+                  </div>
+
+              </div>
+
+          </div>
+      {% endfor %}
+    {% endif %}
+
+    {% if not request.user.is_authenticated %}
+       <h1>This site is available only for logged in users!</h1>
+    {% endif %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+<script>
+  $( document ).ready(function() {
+
+// FLIPPING THE DAY CARD
+    function flipper() {
+        $('.opt').on('click', function(){
+            $(this).parents('.day').toggleClass('flip');
+        });
+    }
+    flipper();
+
+// SHOW EVENT MENU - SLIDE TOOGLE
+    function showMenu() {
+      $('.ev_back').on('click', function(){
+        $(this).toggleClass('active');
+        $(this).parent().find('.ev_menu').slideToggle();
+
+
+      });
+
+    }
+    showMenu();
+
+    /*
+    function deleteEvent() {
+      $('.del').on('click', function(){
+        $(this).parents('.event_panel').remove();
+
+      });
+    }
+    deleteEvent();
+    */
+// SHOW EDIT PANEL
+    function editEvent() {
+      $('.edit').on('click', function(){
+        $(this).toggleClass('focus');
+        $(this).parent().find('#edit_form').toggle(1000);
+      });
+    }
+    editEvent();
+
+// SHOW MOVE-TO PANEL
+    function moveEvent() {
+      $('.moveTo').on('click', function(){
+        $(this).toggleClass('focus');
+        $(this).parent().find('#move_form').toggle(1000);
+      });
+    }
+    moveEvent();
+
+// EVENT DELETE CONFIRMATION
+    $('.delete').on('click', function(){
+      return confirm('Are you sure of deleting this event?');
+    });
+
+// REAL TIME CLOCK
+    var myVar = setInterval(myTimer, 1000);
+    function myTimer() {
+      var d = new Date();
+      $('#time').html(d.toLocaleTimeString());
+    }
+
+
+    function myDay() {
+
+      week_days = {
+        '0': 'Sunday',
+        '1': 'Monday',
+        '2': 'Tuesday',
+        '3': 'Wednesday',
+        '4': 'Thursday',
+        '5': 'Friday',
+        '6': 'Saturday',
+    }
+
+      var d = new Date();
+      $('#day').html(d.getDate());
+      $('#weekday').html(week_days[d.getDay()]);
+    }
+    myDay();
+
+  });
+
+
+
+</script>
+
+</body>
+</html>

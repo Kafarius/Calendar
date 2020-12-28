@@ -1,0 +1,25 @@
+body {
+  background-color: #8a70ff;
+  margin: 0;
+  padding: 0;
+}
+.events {
+    display: block;
+    float: right;
+
+}
+.tiles {
+    margin: 0;
+    padding: 0;
+    width: 80%;
+    height: auto;
+
+}
+.tile {
+    float: left;
+    margin-left: 5%;
+    display: block;
+    height: 200px;
+    width: 15%;
+    border: 1px solid black;
+}

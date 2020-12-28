@@ -1,0 +1,51 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{% static 'css/planner.css' %}" rel="stylesheet" type="text/css">
+    <title>Planner</title>
+
+</head>
+<body>
+    {% if request.user.is_authenticated %}
+        
+        <h1> {{user}}'s Planner</h1>
+        <a href="/eventcreation">Create Event</a><br>
+        <a href="/monthplanning">Plan a month</a><br>
+        <div class="months">
+            {% for month in months %}
+                <a href="/planner/{{user}}/{{month.emonth}}">{{month.emonth}}</a><br>
+            {% endfor %}
+        </div>
+
+        <div class="events">
+            <h3>This is your Events List:</h3>
+            <ul>
+                {% for event in events %}
+                    <li>
+                        <p>
+                            <span>{{event.eday}} - </span>
+                            <span>{{event.emonth}}</span><br>
+                            <span>{{event.ename}}</span>
+                            at
+                            <span>{{event.etime}}</span>
+                        </p>
+                        <span>{{event.etext}}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+
+
+
+    {% endif %}
+
+    {% if not request.user.is_authenticated %}
+       <h1>This site is available only for logged in users!</h1>
+    {% endif %}
+
+</body>
+</html>

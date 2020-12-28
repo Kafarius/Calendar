@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% if request.user.is_authenticated %}
+    <h2>Hello {{user}}, create your Event!</h2>
+    <form method="post">
+        {% csrf_token %}
+        <p>Day:</p>
+        <input type="number" name="eday" id="eday" min="1" max="31" value="1" required><br>
+        <p>Month:</p>
+        <select name="emonth" id="emonth">
+          <option value="January">January</option>
+          <option value="February">February</option>
+          <option value="March">March</option>
+          <option value="April">April</option>
+          <option value="May">May</option>
+          <option value="June">June</option>
+          <option value="July">July</option>
+          <option value="August">August</option>
+          <option value="September">September</option>
+          <option value="October">October</option>
+          <option value="November">November</option>
+          <option value="December">December</option>
+        </select>
+        <p>Time:</p>
+        <input type="time" name="etime" id="etime" required><br>
+        <p>Event Name:</p>
+        <input type="text" name="ename" id="ename" required><br>
+        <p>Note:</p>
+        <textarea name="etext" id="etext" required></textarea><br>
+
+
+        <button type="submit">Create Event</button>
+    </form>
+{% endif %}
+    {% if not request.user.is_authenticated %}
+        <h2>Hello. If you want to add Event, u must be signed in! ;)</h2><br>
+        <a href="/signin">Sign in!</a>
+    {% endif %}
+</body>
+</html>
