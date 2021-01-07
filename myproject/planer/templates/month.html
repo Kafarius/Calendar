@@ -52,6 +52,8 @@
                                               <button class="edit">Edit</button>
                                               <form id="edit_form" action="/eventedit/" method="post">
                                                   {% csrf_token %}
+                                                    <input type="hidden" id="eday" name="eday" value="{{event.eday}}">
+                                                    <input type="hidden" id="emonth" name="emonth" value="{{event.emonth}}">
                                                     <input type="hidden" id="ename" name="ename" value="{{event.ename}}">
                                                     <input type="hidden" id="etext" name="etext" value="{{event.etext}}">
                                                     <input type="hidden" id="userid" name="userid" value="{{event.userid}}">
@@ -88,11 +90,14 @@
                                               </form>
                                             </div>
 
-                                               <form action="/makemonthly/" method="post">
+                                               <form action="/makecyclical/" method="post">
                                                   {% csrf_token %}
                                                     <input type="hidden" id="id" name="id" value="{{event.id}}">
-
-                                                  <button class="make_monthly" type="submit">Make Monthly</button>
+                                                    <select name="interval" id="interval">
+                                                        <option value="Daily">Daily</option>
+                                                        <option value="Monthly">Monthly</option>
+                                                      </select>
+                                                  <button class="make_monthly" type="submit">Make Cyclical</button>
                                               </form>
 
                                               <form action="/eventdelete/" method="post">
@@ -101,6 +106,8 @@
                                                     <input type="hidden" id="emonth" name="emonth" value="{{event.emonth}}">
                                                     <input type="hidden" id="eday" name="eday" value="{{event.eday}}">
                                                     <input type="hidden" id="ename" name="ename" value="{{event.ename}}">
+                                                    <input type="hidden" id="id" name="id" value="{{event.id}}">
+
                                                   <button class="delete" type="submit">Delete</button>
                                               </form>
 

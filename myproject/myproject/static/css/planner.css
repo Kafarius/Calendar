@@ -8,6 +8,11 @@ body {
     float: right;
 
 }
+.events ul {
+  height: 200px;
+  overflow-y: scroll;
+  border: 1px solid black;
+}
 .tiles {
     margin: 0;
     padding: 0;

@@ -1,0 +1,72 @@
+body {
+  background-color: #302f2e;
+  color: #ffc664;
+  margin: 0;
+  padding: 0;
+}
+h2 {
+  width: 100%;
+  height: auto;
+  display: block;
+  text-align: center;
+}
+form {
+  display: block;
+  padding: 20px;
+  text-align: center;
+  width: 50%;
+  min-height:70vh;
+
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 10px;
+  border: 2px solid #fff1ba;
+  box-sizing: border-box;
+}
+
+input, textarea, select {
+  width: 30%;
+  height: auto;
+  text-align: center;
+  font-size: 15px;
+  background-color: #fff1ba;
+  margin-bottom: 30px;
+  border: 2px solid transparent;
+  outline: none;
+  padding: 5px 10px;
+  box-sizing: content-box;
+  border-radius: 5px;
+
+}
+input:focus, textarea:focus, select:focus {
+  -webkit-box-shadow: 0px 0px 5px 2px rgba(255,209,111,1);
+  -moz-box-shadow: 0px 0px 5px 2px rgba(255,209,111,1);
+  box-shadow: 0px 0px 5px 2px rgba(255,209,111,1);
+}
+textarea {
+  padding-left: 20px;
+
+}
+button {
+  display: block;
+  height: 40px;
+  width: 30%;
+  background-color: #ffc664;
+  color: gray;
+  border: none;
+  outline: none;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 20px;
+  padding: 10px 10px;
+  cursor: pointer;
+  transition: 0.7s;
+}
+button:hover {
+  transform: scale(1.2);
+  color: black;
+  background-color: #579e54;
+
+}

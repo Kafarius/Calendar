@@ -11,10 +11,11 @@ class EventForm(ModelForm):
 
 
 class DelForm(ModelForm):
+    id = forms.IntegerField()
 
     class Meta:
         model = event
-        fields = ['userid', 'emonth', 'eday',  'ename']
+        fields = ['userid', 'emonth', 'eday',  'ename', 'id']
 
 
 class EditForm(ModelForm):
@@ -24,7 +25,7 @@ class EditForm(ModelForm):
 
     class Meta:
         model = event
-        fields = ['ename', 'etext', 'userid', 'new_etime', 'new_ename', 'new_etext']
+        fields = ['ename', 'etext', 'userid', 'new_etime', 'new_ename', 'new_etext', 'emonth', 'eday']
 
 
 class MoveForm(ModelForm):
@@ -38,7 +39,8 @@ class MoveForm(ModelForm):
 
 class GetEventForm(ModelForm):
     id = forms.IntegerField()
+    interval = forms.CharField()
 
     class Meta:
         model = event
-        fields = ['id']
+        fields = ['id', 'interval']

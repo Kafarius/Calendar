@@ -15,6 +15,6 @@ urlpatterns = [
     path('eventmove/', pviews.move_event, name = 'evntmove'),
     path('planner/<str:user>', pviews.show_planner, name = 'planner'),
     path('planner/<str:user>/<str:month>', pviews.show_month, name = 'month'),
-    path('makemonthly/', pviews.make_monthly, name = 'makemonthly'),
+    path('makecyclical/', pviews.make_cyclical, name = 'makecyclical'),
     path('admin/', admin.site.urls),
 ]

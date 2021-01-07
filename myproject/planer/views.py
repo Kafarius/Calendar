@@ -57,27 +57,31 @@ def signout(request):                                                       # US
     return redirect('index')
 
 
-def month_to_int(month):
+def month_converter(month):
     month_dict = {
-        'January': '1',
-        'February': '2',
-        'March': '3',
-        'April': '4',
-        'May': '5',
-        'June': '6',
-        'July': '7',
-        'August': '8',
-        'September': '9',
-        'October': '10',
-        'November': '11',
-        'December': '12',
+        'January': 1,
+        'February': 2,
+        'March': 3,
+        'April': 4,
+        'May': 5,
+        'June': 6,
+        'July': 7,
+        'August': 8,
+        'September': 9,
+        'October': 10,
+        'November': 11,
+        'December': 12,
     }
-    value = month_dict[month]
-    return value
+    if isinstance(month, str):
+        result = month_dict[month]
+    else:
+        for key, value in month_dict.items():
+            if month == value:
+                result = key
+    return result
 
 
-def create_event(request):                                                   # EVENT CREATION
-
+def weekday(day):
     week_days = {
         '0': 'Monday',
         '1': 'Tuesday',
@@ -87,6 +91,23 @@ def create_event(request):                                                   # E
         '5': 'Saturday',
         '6': 'Sunday',
     }
+    day_name = week_days[day]
+    return day_name
+
+
+def days_in_month(month):
+    days = 0
+    if month in ['January', 'March', 'May', 'July', 'August', 'October', 'December']:
+        days = 31
+    elif month in ['April', 'June', 'September', 'November']:
+        days = 30
+    elif month == 'February':
+        days = 28
+    return days
+
+
+def create_event(request):                                                   # EVENT CREATION
+
     form = EventForm()
     if request.method == 'POST':
         form = EventForm(request.POST)
@@ -100,15 +121,15 @@ def create_event(request):                                                   # E
                 etime = form.cleaned_data['etime'],
                 ename = form.cleaned_data['ename'],
                 etext = form.cleaned_data['etext'],
-                edate = datetime.date(2021, int(month_to_int(form.cleaned_data['emonth'])), form.cleaned_data['eday']),
-                eweekday = week_days[str(date(2021, int(month_to_int(form.cleaned_data['emonth'])), form.cleaned_data['eday']).weekday())]
+                edate = datetime.date(2021, int(month_converter(form.cleaned_data['emonth'])), form.cleaned_data['eday']),
+                eweekday = weekday(str(date(2021, int(month_converter(form.cleaned_data['emonth'])), form.cleaned_data['eday']).weekday()))
                 # password = form.cleaned_data['password'],
             )
 
             event_obj.save()
 
             # messages.success(request, 'Account has been created for ' + user)
-            return redirect('planner', user = request.user)
+            return redirect('planner', user=request.user)
 
         else:
             print(form.errors)
@@ -116,7 +137,6 @@ def create_event(request):                                                   # E
 
     else:
         form = EventForm()
-
 
     context = {'form': form,
 
@@ -134,9 +154,11 @@ def delete_event(request):                                                  # EV
             emonth = form.cleaned_data['emonth']
             eday = form.cleaned_data['eday']
             ename = form.cleaned_data['ename']
-            event_obj = event.objects.filter(userid=userid, emonth=emonth, eday=eday,  ename=ename)
+            id = form.cleaned_data['id']
+            print(id)
+            event_obj = event.objects.filter(userid=userid, emonth=emonth, eday=eday,  ename=ename, id=id)
             event_obj.delete()
-    return redirect('planner', user = request.user)
+    return redirect('planner', user=request.user)
 
 
 def edit_event(request):
@@ -145,7 +167,8 @@ def edit_event(request):
         form = EditForm(request.POST)
         print(form.errors)
         if form.is_valid():
-
+            eday = form.cleaned_data['eday']
+            emonth = form.cleaned_data['emonth']
             ename = form.cleaned_data['ename']
             etext = form.cleaned_data['etext']
             userid = form.cleaned_data['userid']
@@ -153,22 +176,14 @@ def edit_event(request):
             new_ename = form.cleaned_data['new_ename']
             new_etext = form.cleaned_data['new_etext']
 
-            event_edited = event.objects.filter(userid=userid, ename=ename, etext=etext)
+            event_edited = event.objects.filter(userid=userid, ename=ename, etext=etext, eday=eday, emonth=emonth)
             event_edited.update(etime=new_etime, ename=new_ename, etext=new_etext)
 
     return redirect('planner', user=request.user)
 
 
 def move_event(request):
-    week_days = {
-        '0': 'Monday',
-        '1': 'Tuesday',
-        '2': 'Wednesday',
-        '3': 'Thursday',
-        '4': 'Friday',
-        '5': 'Saturday',
-        '6': 'Sunday',
-    }
+
     form = MoveForm
     if request.method == 'POST':
         form = MoveForm(request.POST)
@@ -179,61 +194,54 @@ def move_event(request):
             emonth = form.cleaned_data['emonth']
             new_eday = form.cleaned_data['new_eday']
             new_emonth = form.cleaned_data['new_emonth']
-            new_edate = datetime.date(2021, int(month_to_int(form.cleaned_data['new_emonth'])), form.cleaned_data['new_eday'])
-            new_eweekday = week_days[str(date(2021, int(month_to_int(form.cleaned_data['new_emonth'])), form.cleaned_data['new_eday']).weekday())]
+            new_edate = datetime.date(2021, int(month_converter(form.cleaned_data['new_emonth'])), form.cleaned_data['new_eday'])
+            new_eweekday = weekday(str(date(2021, int(month_converter(form.cleaned_data['new_emonth'])), form.cleaned_data['new_eday']).weekday()))
             event_moved = event.objects.filter(userid=userid, eday=eday, emonth=emonth)
             event_moved.update(eday=new_eday, emonth=new_emonth, edate=new_edate, eweekday=new_eweekday)
 
     return redirect('planner', user=request.user)
 
 
-def make_monthly(request):
-    week_days = {
-        '0': 'Monday',
-        '1': 'Tuesday',
-        '2': 'Wednesday',
-        '3': 'Thursday',
-        '4': 'Friday',
-        '5': 'Saturday',
-        '6': 'Sunday',
-    }
+def make_cyclical(request):
+
     form = GetEventForm()
     if request.method == 'POST':
         form = GetEventForm(request.POST)
-        print(form.errors)
+
         if form.is_valid():
             id = form.cleaned_data['id']
-            ev = event.objects.get(id = id)
-            print(ev.ename)
+            interval = form.cleaned_data['interval']
+            ev = event.objects.get(id=id)
             time = datetime.datetime.now()
-            size = 13
 
-            month_dict = {
-                '1': 'January',
-                '2': 'February',
-                '3': 'March',
-                '4': 'April',
-                '5': 'may',
-                '6': 'June',
-                '7': 'July',
-                '8': 'August',
-                '9': 'September',
-                '10': 'October',
-                '11': 'November',
-                '12': 'December',
-            }
+            if interval == 'Monthly':
+                size = 13
+                objs = (event(
+                    userid=ev.userid,
+                    user=ev.user,
+                    eday=ev.eday,
+                    emonth=month_converter(i),
+                    etime=ev.etime,
+                    ename=ev.ename,
+                    etext=ev.etext,
+                    ecreationdate=time.strftime("%X"),
+                    edate='2021-' + str(i) + '-' + str(ev.eday),
+                    eweekday=weekday(str(date(2021, int(i), ev.eday).weekday()))) for i in range(2, 13, 1))
 
-            objs = (event(
-                userid=ev.userid,
-                user = ev.user,
-                eday = ev.eday,
-                emonth = month_dict[str(i)],
-                etime = ev.etime,
-                ename = ev.ename,
-                etext = ev.etext,
-                ecreationdate = time.strftime("%X"),
-                edate = '2021-' + str(i) + '-' + str(ev.eday),
-                eweekday = week_days[str(date(2021, int(i), ev.eday).weekday())]) for i in range(1, 13, 1))
+            elif interval == 'Daily':
+                size = days_in_month(ev.emonth) - ev.eday
+                objs = (event(
+                    userid=ev.userid,
+                    user=ev.user,
+                    eday=i,
+                    emonth=ev.emonth,
+                    etime=ev.etime,
+                    ename=ev.ename,
+                    etext=ev.etext,
+                    ecreationdate=time.strftime("%X"),
+                    edate='2021-' + str(month_converter(str(ev.emonth))) + '-' + str(i),
+                    eweekday=weekday(str(date(2021, int(month_converter(str(ev.emonth))), i).weekday()))) for i in range(ev.eday + 1, days_in_month(ev.emonth) + 1, 1))
+
             while True:
                 batch = list(islice(objs, size))
                 if not batch:
