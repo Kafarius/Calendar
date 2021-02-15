@@ -10,9 +10,35 @@
 </head>
 <body>
 
+  <div id="navbar">
+       <div class="both">
+         <a href="/">Start</a>
+         <span class="underline"></span>
+       </div>
+       <div class="both">
+         <a href="/planner/{{user}}">Go to Planner</a>
+         <span class="underline"></span>
+       </div>
+       <div class="both">
+         <a href="/eventcreation">Create Event</a>
+         <span class="underline"></span>
+       </div>
+       <div class="both">
+         <a href="/contact">Contact</a>
+         <span class="underline"></span>
+       </div>
+       {% if request.user.is_authenticated %}
+         <a class="fl-r" href="/logout">Logout</a>
+       {% endif %}
+       {% if not request.user.is_authenticated %}
+         <a class="fl-r" href="/signin">Sign in</a>
+         <a class="fl-r" href="/signup">Sign up</a>
+       {% endif %}
+ </div>
+
     {% if request.user.is_authenticated %}
 
-      <h1 class="month_name">{{month}}'21</h1>
+      <h1 class="month_name start_text">{{month}}'21</h1>
       <div id="date_info">
           <p>Day: <span id="day"></span> - <span id="weekday"></span></p>
           <p>Time: <span id="time"></span></p>
@@ -48,30 +74,29 @@
                                       <div class="event_panel">
                                           <a class="ev_back"><p>{{event.etime}} - {{event.ename}}</p></a>
                                           <div class="ev_menu">
-                                            <div class="edit_panel">
-                                              <button class="edit">Edit</button>
-                                              <form id="edit_form" action="/eventedit/" method="post">
+                                            <div class="subpanel">
+                                              <button class="show_btn">Edit</button>
+                                              <form class="subpanel_form" action="/eventedit/" method="post">
                                                   {% csrf_token %}
-                                                    <input type="hidden" id="eday" name="eday" value="{{event.eday}}">
-                                                    <input type="hidden" id="emonth" name="emonth" value="{{event.emonth}}">
-                                                    <input type="hidden" id="ename" name="ename" value="{{event.ename}}">
-                                                    <input type="hidden" id="etext" name="etext" value="{{event.etext}}">
-                                                    <input type="hidden" id="userid" name="userid" value="{{event.userid}}">
+                                                    <input type="hidden" id="id" name="id" value="{{event.id}}">
+                                                    <p class="label">Event Time:</p>
                                                     <input type="time" id="new_etime" name="new_etime" value="{{event.etime}}" required>
+                                                    <p class="label">Event Name:</p>
                                                     <input type="text" id="new_ename" name="new_ename" value="{{event.ename}}" required>
+                                                    <p class="label">Event Text:</p>
                                                     <input type="text" id="new_etext" name="new_etext" value="{{event.etext}}" required>
-                                                  <button class="save" type="submit">Save</button>
+                                                  <button class="doIt" type="submit">Save</button>
                                               </form>
                                             </div>
 
-                                            <div class="moveTo_panel">
-                                              <button class="moveTo">Move</button>
-                                              <form id="move_form" action="/eventmove/" method="post">
+                                            <div class="subpanel">
+                                              <button class="show_btn">Move</button>
+                                              <form class="subpanel_form" action="/eventmove/" method="post">
                                                   {% csrf_token %}
-                                                    <input type="hidden" id="eday" name="eday" value="{{event.eday}}">
-                                                    <input type="hidden" id="emonth" name="emonth" value="{{event.emonth}}">
-                                                    <input type="hidden" id="userid" name="userid" value="{{event.userid}}">
+                                                    <input type="hidden" id="id" name="id" value="{{event.id}}">
+                                                    <p class="label">New Day:</p>
                                                     <input type="number" name="new_eday" id="new_eday" min="1" max="31" value="{{event.eday}}">
+                                                    <p class="label">New Month:</p>
                                                     <select name="new_emonth" id="new_emonth">
                                                         <option value="January">January</option>
                                                         <option value="February">February</option>
@@ -86,29 +111,29 @@
                                                         <option value="November">November</option>
                                                         <option value="December">December</option>
                                                       </select>
-                                                  <button class="move" type="submit">Move this event</button>
+                                                  <button class="doIt" type="submit">Move this event</button>
                                               </form>
                                             </div>
+                                            <div class="subpanel">
+                                              <button class="show_btn" type="submit">Cyclical</button>
+                                              <form class="subpanel_form" action="/makecyclical/" method="post">
+                                                 {% csrf_token %}
+                                                   <input type="hidden" id="id" name="id" value="{{event.id}}">
+                                                   <p class="label">Select Interval:</p>
+                                                   <select name="interval" id="interval">
+                                                       <option value="Daily">Daily</option>
+                                                       <option value="Monthly">Monthly</option>
+                                                     </select>
+                                                 <button class="doIt" type="submit">Make Cyclical</button>
+                                             </form>
+                                            </div>
 
-                                               <form action="/makecyclical/" method="post">
-                                                  {% csrf_token %}
-                                                    <input type="hidden" id="id" name="id" value="{{event.id}}">
-                                                    <select name="interval" id="interval">
-                                                        <option value="Daily">Daily</option>
-                                                        <option value="Monthly">Monthly</option>
-                                                      </select>
-                                                  <button class="make_monthly" type="submit">Make Cyclical</button>
-                                              </form>
 
                                               <form action="/eventdelete/" method="post">
                                                   {% csrf_token %}
-                                                    <input type="hidden" id="userid" name="userid" value="{{event.userid}}">
-                                                    <input type="hidden" id="emonth" name="emonth" value="{{event.emonth}}">
-                                                    <input type="hidden" id="eday" name="eday" value="{{event.eday}}">
-                                                    <input type="hidden" id="ename" name="ename" value="{{event.ename}}">
                                                     <input type="hidden" id="id" name="id" value="{{event.id}}">
 
-                                                  <button class="delete" type="submit">Delete</button>
+                                                  <button class="doIt delete" type="submit">Delete</button>
                                               </form>
 
                                           </div>
@@ -152,32 +177,14 @@
     }
     showMenu();
 
-    /*
-    function deleteEvent() {
-      $('.del').on('click', function(){
-        $(this).parents('.event_panel').remove();
-
+// SHOW SUBPANEL FORM
+    function showSubpanel() {
+      $('.show_btn').on('click', function(){
+        $(this).parent().find('.subpanel_form').slideToggle();
+        $(this).toggleClass('active_btn')
       });
     }
-    deleteEvent();
-    */
-// SHOW EDIT PANEL
-    function editEvent() {
-      $('.edit').on('click', function(){
-        $(this).toggleClass('focus');
-        $(this).parent().find('#edit_form').toggle(1000);
-      });
-    }
-    editEvent();
-
-// SHOW MOVE-TO PANEL
-    function moveEvent() {
-      $('.moveTo').on('click', function(){
-        $(this).toggleClass('focus');
-        $(this).parent().find('#move_form').toggle(1000);
-      });
-    }
-    moveEvent();
+    showSubpanel();
 
 // EVENT DELETE CONFIRMATION
     $('.delete').on('click', function(){

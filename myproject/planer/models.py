@@ -16,4 +16,5 @@ class event(models.Model):
     edate = models.DateField()
     eweekday = models.CharField(max_length=50)
 
+
     objects = models.Manager()

@@ -8,18 +8,78 @@
     <title>Index</title>
 </head>
 <body>
+   <div id="navbar">
+        <div class="both">
+          <a href="/">Start</a>
+          <span class="underline"></span>
+        </div>
+        <div class="both">
+          <a href="/planner/{{user}}">Go to Planner</a>
+          <span class="underline"></span>
+        </div>
+        <div class="both">
+          <a href="/eventcreation">Create Event</a>
+          <span class="underline"></span>
+        </div>
+        <div class="both">
+          <a href="/contact">Contact</a>
+          <span class="underline"></span>
+        </div>
+        {% if request.user.is_authenticated %}
+          <a class="fl-r" href="/logout">Logout</a>
+        {% endif %}
+        {% if not request.user.is_authenticated %}
+          <a class="fl-r" href="/signin">Sign in</a>
+          <a class="fl-r" href="/signup">Sign up</a>
+        {% endif %}
+  </div>
+    <div class="start_text">
+      <h1>Hello{% if request.user.is_authenticated %} {{request.user}}{% endif %}!</h1>
+      <h2>Welcome to ePlan - your personal planner application.</h2>
+      <p>With this app you can create lots of events and manage them. This will allow you to plan your time efficiently. As you know, time is money!</p>
+      <i>This application is study project and it will not be used in the near future for commercial purposes.</i>
+    </div>
 
-    <h1>Hello</h1>
+    <div id="frontback">
+      <div id="fbtext">
+        <p>Usually, web applications consist of two layers - Frontend and Backend, and that's how it's in this app. </p>
+        <p>Frontend is based on CSS, HTML, JavaScript - jquery. </p>
+        <p>Backend - Python and it's popular framework, django. </p>
+      </div>
+      <div class="frontend">
+        <img src="{% static 'imgs/frontend.png' %}">
+        <h3>Frontend</h3>
+        <div class="techbar">
+          <img src="{% static 'imgs/html.png' %}"><p>- HTML5</p>
+        </div>
+        <div class="techbar">
+          <img src="{% static 'imgs/css.png' %}"><p>- CSS3</p>
+        </div>
+        <div class="techbar">
+          <img src="{% static 'imgs/js.png' %}"><p>- JavaScript</p>
+        </div>
+        <div class="techbar">
+          <img src="{% static 'imgs/jq.png' %}"><p>- Jquery, JS's library.</p>
+        </div>
+      </div>
+      <div class="backend">
+        <img src="{% static 'imgs/backend.png' %}">
+        <h3>Backend</h3>
+        <div class="techbar">
+          <img src="{% static 'imgs/python.png' %}"><p>- Python</p>
+        </div>
+        <div class="techbar">
+          <img src="{% static 'imgs/django.png' %}"><p>- Django, Python's framework.</p>
+        </div>
+      </div>
+      <div id="about_me">
+        <p>This application was created because of my interest in Web Development. I'm a self-taught man and I'm learning web programming for about a year.
+          I'm most interested in Frontend programming, however, I'm trying to raise my Backend skills too. That's because in the future I would like to become a full-stack developer :)</p>
+        <h2>I would love your feedback! ;)</h2>
+      </div>
+    </div>
 
-    {% if request.user.is_authenticated %}
-        <h2>{{user}}</h2>
-        <a href="/eventcreation">create event</a>
-        <a href="/planner/{{user}}">Go to Planner</a>
-        <a href="/logout">logout</a>
-    {% endif %}
-    {% if not request.user.is_authenticated %}
-        <a href="/signin">Sign in!</a>
-    {% endif %}
+
 
 </body>
 </html>

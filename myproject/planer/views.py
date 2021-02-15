@@ -4,12 +4,14 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout
 from django.urls import reverse
-from .forms import EventForm, DelForm, EditForm, MoveForm, GetEventForm
+from .forms import EventForm, IdForm, EditForm, MoveForm, GetEventForm, FeedbackForm
 from django.contrib import messages
 import datetime
 from datetime import date
 from django.db.models import Count
 from itertools import islice
+from django.core.mail import send_mail
+import smtplib
 
 
 from .models import event
@@ -28,6 +30,7 @@ def signup(request):                                                        # US
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
+
             return redirect('index')
     else:
         form = UserCreationForm()
@@ -108,7 +111,7 @@ def days_in_month(month):
 
 def create_event(request):                                                   # EVENT CREATION
 
-    form = EventForm()
+    # form = EventForm()
     if request.method == 'POST':
         form = EventForm(request.POST)
         if form.is_valid():
@@ -123,40 +126,27 @@ def create_event(request):                                                   # E
                 etext = form.cleaned_data['etext'],
                 edate = datetime.date(2021, int(month_converter(form.cleaned_data['emonth'])), form.cleaned_data['eday']),
                 eweekday = weekday(str(date(2021, int(month_converter(form.cleaned_data['emonth'])), form.cleaned_data['eday']).weekday()))
-                # password = form.cleaned_data['password'],
             )
-
             event_obj.save()
-
-            # messages.success(request, 'Account has been created for ' + user)
+            # messages.success(request, 'Event has been created')
             return redirect('planner', user=request.user)
-
         else:
             print(form.errors)
             return redirect('eventcreation')
-
     else:
         form = EventForm()
-
-    context = {'form': form,
-
-    }
+    context = {'form': form}
     return render(request, 'eventcreation.html', context)
 
 
 def delete_event(request):                                                  # EVENT DELETING
-    form = DelForm()
+    form = IdForm()
     if request.method == 'POST':
-        form = DelForm(request.POST)
+        form = IdForm(request.POST)
         print(form.errors)
         if form.is_valid():
-            userid = form.cleaned_data['userid']
-            emonth = form.cleaned_data['emonth']
-            eday = form.cleaned_data['eday']
-            ename = form.cleaned_data['ename']
             id = form.cleaned_data['id']
-            print(id)
-            event_obj = event.objects.filter(userid=userid, emonth=emonth, eday=eday,  ename=ename, id=id)
+            event_obj = event.objects.filter(id=id)
             event_obj.delete()
     return redirect('planner', user=request.user)
 
@@ -167,37 +157,32 @@ def edit_event(request):
         form = EditForm(request.POST)
         print(form.errors)
         if form.is_valid():
-            eday = form.cleaned_data['eday']
-            emonth = form.cleaned_data['emonth']
-            ename = form.cleaned_data['ename']
-            etext = form.cleaned_data['etext']
-            userid = form.cleaned_data['userid']
+
+            id = form.cleaned_data['id']
             new_etime = form.cleaned_data['new_etime']
             new_ename = form.cleaned_data['new_ename']
             new_etext = form.cleaned_data['new_etext']
 
-            event_edited = event.objects.filter(userid=userid, ename=ename, etext=etext, eday=eday, emonth=emonth)
-            event_edited.update(etime=new_etime, ename=new_ename, etext=new_etext)
+            event.objects.filter(id=id).update(etime=new_etime, ename=new_ename, etext=new_etext)
 
     return redirect('planner', user=request.user)
 
 
 def move_event(request):
-
     form = MoveForm
     if request.method == 'POST':
         form = MoveForm(request.POST)
         print(form.errors)
         if form.is_valid():
-            userid = form.cleaned_data['userid']
-            eday = form.cleaned_data['eday']
-            emonth = form.cleaned_data['emonth']
+            id = form.cleaned_data['id']
             new_eday = form.cleaned_data['new_eday']
             new_emonth = form.cleaned_data['new_emonth']
             new_edate = datetime.date(2021, int(month_converter(form.cleaned_data['new_emonth'])), form.cleaned_data['new_eday'])
             new_eweekday = weekday(str(date(2021, int(month_converter(form.cleaned_data['new_emonth'])), form.cleaned_data['new_eday']).weekday()))
-            event_moved = event.objects.filter(userid=userid, eday=eday, emonth=emonth)
-            event_moved.update(eday=new_eday, emonth=new_emonth, edate=new_edate, eweekday=new_eweekday)
+            event.objects.filter(id=id).update(eday=new_eday, emonth=new_emonth, edate=new_edate, eweekday=new_eweekday)
+
+
+
 
     return redirect('planner', user=request.user)
 
@@ -254,10 +239,12 @@ def make_cyclical(request):
 def show_planner(request, user):
     events = event.objects.all().filter(user = user).order_by('edate')
     months = event.objects.raw('SELECT * FROM planer_event WHERE user = %s GROUP BY emonth ORDER BY edate', [user])
+
     context = {
         'user': user,
         'events': events,
         'months': months,
+
     }
 
     return render(request, 'planner.html', context)
@@ -276,3 +263,40 @@ def show_month(request, user, month):
 
     }
     return render(request, 'month.html', context)
+
+
+def show_contact(request):
+    form = FeedbackForm()
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            mailFrom = email
+            mailTo = ['eplan.feedback@gmail.com']
+            mailSubject = "Event move success!"
+            mailBody = '''
+                        From: {}
+                        \n{}
+                        '''.format(mailFrom, message)
+            user = 'eplan.feedback@gmail.com'
+            password = 'eplanfeedback123'
+
+            try:
+                server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+                server.ehlo()
+                server.login(user, password)
+                server.sendmail(user, mailTo, mailBody)
+                server.close()
+                messages.success(request, 'Message has been sent!')
+            except:
+                messages.error(request, 'Error!')
+    else:
+            form = FeedbackForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'contact.html', context)
+
+
+

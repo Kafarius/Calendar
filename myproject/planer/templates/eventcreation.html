@@ -8,8 +8,34 @@
     <title>Title</title>
 </head>
 <body>
+  <div id="navbar">
+       <div class="both">
+         <a href="/">Start</a>
+         <span class="underline"></span>
+       </div>
+       <div class="both">
+         <a href="/planner/{{user}}">Go to Planner</a>
+         <span class="underline"></span>
+       </div>
+       <div class="both">
+         <a href="/eventcreation">Create Event</a>
+         <span class="underline"></span>
+       </div>
+       <div class="both">
+         <a href="/contact">Contact</a>
+         <span class="underline"></span>
+       </div>
+       {% if request.user.is_authenticated %}
+         <a class="fl-r" href="/logout">Logout</a>
+       {% endif %}
+       {% if not request.user.is_authenticated %}
+         <a class="fl-r" href="/signin">Sign in</a>
+         <a class="fl-r" href="/signup">Sign up</a>
+       {% endif %}
+ </div>
+
     {% if request.user.is_authenticated %}
-    <h2>Hello {{user}}, create your Event!</h2>
+    <h1 class="start_text">Hello <span>{{user}}</span>, create your Event!</h1>
     <form method="post">
         {% csrf_token %}
         <p>Day:</p>
@@ -41,8 +67,8 @@
     </form>
 {% endif %}
     {% if not request.user.is_authenticated %}
-        <h2>Hello. If you want to add Event, u must be signed in! ;)</h2><br>
-        <a href="/signin">Sign in!</a>
+        <h1 class="start_text">Hello. If you want to add Event, u must be signed in! ;)</h1><br>
+
     {% endif %}
 
 

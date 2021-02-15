@@ -1,16 +1,53 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="{% static 'css/signin.css' %}" rel="stylesheet" type="text/css">
     <title>Title</title>
 </head>
 <body>
 
-    <h2>Sign in</h2>
+  <div id="navbar">
+       <div class="both">
+         <a href="/">Start</a>
+         <span class="underline"></span>
+       </div>
+       <div class="both">
+         <a href="/planner/{{user}}">Go to Planner</a>
+         <span class="underline"></span>
+       </div>
+       <div class="both">
+         <a href="/eventcreation">Create Event</a>
+         <span class="underline"></span>
+       </div>
+       <div class="both">
+         <a href="/contact">Contact</a>
+         <span class="underline"></span>
+       </div>
+       {% if request.user.is_authenticated %}
+         <a class="fl-r" href="/logout">Logout</a>
+       {% endif %}
+       {% if not request.user.is_authenticated %}
+         <a class="fl-r" href="/signin">Sign in</a>
+         <a class="fl-r" href="/signup">Sign up</a>
+       {% endif %}
+ </div>
+
+    <h1 class="start_text">Sign in</h1>
     <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Sign in</button>
+      {% csrf_token %}
+      {% for field in form %}
+        <p>
+          {{ field.label_tag }}<br>
+          {{ field }}
+          {% for error in field.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </p>
+      {% endfor %}
+      <button type="submit">Sign in!</button>
     </form>
 
 </body>

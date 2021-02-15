@@ -13,8 +13,10 @@ urlpatterns = [
     path('eventdelete/', pviews.delete_event, name = 'evntdelete'),
     path('eventedit/', pviews.edit_event, name = 'evntedit'),
     path('eventmove/', pviews.move_event, name = 'evntmove'),
+    path('contact/', pviews.show_contact, name = 'contact'),
     path('planner/<str:user>', pviews.show_planner, name = 'planner'),
     path('planner/<str:user>/<str:month>', pviews.show_month, name = 'month'),
     path('makecyclical/', pviews.make_cyclical, name = 'makecyclical'),
     path('admin/', admin.site.urls),
 ]
+

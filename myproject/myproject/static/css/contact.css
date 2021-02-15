@@ -4,76 +4,6 @@ body {
   margin: 0;
   padding: 0;
 }
-h1 {
-  width: 100%;
-  height: auto;
-  display: block;
-  text-align: center;
-}
-form {
-  display: block;
-  padding: 20px;
-  text-align: center;
-  width: 50%;
-  min-height:70vh;
-
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 10px;
-  border: 2px solid #ffc664;
-  box-sizing: border-box;
-}
-
-input, textarea, select {
-  width: 30%;
-  height: auto;
-  text-align: center;
-  font-size: 15px;
-  background-color: #fff1ba;
-  margin-bottom: 30px;
-  border: 2px solid transparent;
-  outline: none;
-  padding: 5px 10px;
-  box-sizing: content-box;
-  border-radius: 5px;
-
-}
-select {
-  text-align-last:center;
-}
-input:focus, textarea:focus, select:focus {
-  -webkit-box-shadow: 0px 0px 5px 2px rgba(255,165, 80, 1);
-  -moz-box-shadow: 0px 0px 5px 2px rgba(255,165, 80, 1);
-  box-shadow: 0px 0px 5px 2px rgba(255,165, 80, 1);
-}
-textarea {
-  padding-left: 20px;
-
-}
-button {
-  display: block;
-  height: 40px;
-  width: 30%;
-  background-color: #ffc664;
-  color: gray;
-  border: none;
-  outline: none;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 20px;
-  padding: 10px 10px;
-  cursor: pointer;
-  transition: 0.7s;
-}
-button:hover {
-  transform: scale(1.2);
-  color: black;
-  background-color: #579e54;
-
-}
-
 #navbar {
   display: block;
   background-color: #262525;
@@ -123,17 +53,97 @@ button:hover {
   color: orange;
 }
 .fl-r {
-    float: right !important;
+  float: right !important;
+}
+
+form {
+  display: block;
+  padding: 20px;
+  text-align: center;
+  width: 50%;
+  min-height:40vh;
+
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 10px;
+  border: 2px solid #ffc664;
+  box-sizing: border-box;
+}
+
+input, textarea, select {
+  width: 30%;
+  height: auto;
+  text-align: center;
+  font-size: 15px;
+  background-color: #fff1ba;
+  margin-bottom: 30px;
+  border: 2px solid transparent;
+  outline: none;
+  padding: 5px 10px;
+  box-sizing: content-box;
+  border-radius: 5px;
+
+}
+input:focus, textarea:focus, select:focus {
+  -webkit-box-shadow: 0px 0px 5px 2px rgba(255,165, 80, 1);
+  -moz-box-shadow: 0px 0px 5px 2px rgba(255,165, 80, 1);
+  box-shadow: 0px 0px 5px 2px rgba(255,165, 80, 1);
+}
+textarea {
+  padding-left: 20px;
+
+}
+button {
+  display: block;
+  height: 40px;
+  width: 30%;
+  background-color: #ffc664;
+  color: gray;
+  border: none;
+  outline: none;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 20px;
+  padding: 10px 10px;
+  cursor: pointer;
+  transition: 0.7s;
+}
+button:hover {
+  transform: scale(1.2);
+  color: black;
+  background-color: #579e54;
+
+}
+h1 {
+  text-align: center;
 }
 .start_text {
   display: block;
   margin: 0;
   padding: 20px;
-  margin: 20px auto;
+  margin-left: 25%;
+  margin-bottom: 20px;
+  margin-top: 20px;
   border: 2px solid orange;
   border-radius: 10px;
   width: 50%;
   padding-left: 20px;
   box-sizing: border-box;
   border-color: orange;
+
+}
+#mess_box {
+  display: block;
+  width: 100%;
+  height: 20px;
+  text-align: center;
+}
+#mess_box #mess {
+  display: block;
+  font-size: 15px;
+  text-align: center;
+  color: #7bcc5e;
 }

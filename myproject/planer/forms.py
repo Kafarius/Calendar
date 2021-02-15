@@ -10,37 +10,43 @@ class EventForm(ModelForm):
         fields = ['eday', 'emonth', 'etime', 'ename', 'etext']
 
 
-class DelForm(ModelForm):
+class IdForm(ModelForm):
     id = forms.IntegerField()
 
     class Meta:
         model = event
-        fields = ['userid', 'emonth', 'eday',  'ename', 'id']
+        fields = ['id']
 
 
-class EditForm(ModelForm):
+class EditForm(IdForm):
     new_etime = forms.TimeField()
     new_ename = forms.CharField(max_length=50)
     new_etext = forms.CharField(max_length=250)
 
     class Meta:
         model = event
-        fields = ['ename', 'etext', 'userid', 'new_etime', 'new_ename', 'new_etext', 'emonth', 'eday']
+        fields = ['id', 'new_etime', 'new_ename', 'new_etext']
 
 
-class MoveForm(ModelForm):
+class MoveForm(IdForm):
     new_eday = forms.IntegerField()
     new_emonth = forms.CharField(max_length=50)
 
     class Meta:
         model = event
-        fields = ['eday', 'new_eday', 'emonth', 'new_emonth', 'userid']
+        fields = ['id', 'new_eday', 'new_emonth']
 
 
-class GetEventForm(ModelForm):
-    id = forms.IntegerField()
+class GetEventForm(IdForm):
     interval = forms.CharField()
 
     class Meta:
         model = event
         fields = ['id', 'interval']
+
+
+class FeedbackForm(forms.Form):
+    email = forms.EmailField()
+    message = forms.CharField(widget=forms.Textarea)
+
+
