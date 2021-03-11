@@ -282,15 +282,18 @@ def show_contact(request):
             user = 'eplan.feedback@gmail.com'
             password = 'eplanfeedback123'
 
-            try:
-                server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-                server.ehlo()
-                server.login(user, password)
-                server.sendmail(user, mailTo, mailBody)
-                server.close()
-                messages.success(request, 'Message has been sent!')
-            except:
-                messages.error(request, 'Error!')
+            if "eplan.feedback@gmail.com" in str(email):
+                messages.error(request, "Hey, that's my email! Please use yours.")
+            else:
+                try:
+                    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+                    server.ehlo()
+                    server.login(user, password)
+                    server.sendmail(user, mailTo, mailBody)
+                    server.close()
+                    messages.success(request, 'Message has been sent!')
+                except:
+                    messages.error(request, 'Error!')
     else:
             form = FeedbackForm()
     context = {
